@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model content_owner {
+  idx          Int      @id @default(autoincrement())
+  name         String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // The relationship with tbl_book
+  tbl_book     tbl_book[]
+}
+
+// Define the publisher table
+model publisher {
+  idx          Int      @id @default(autoincrement())
+  name         String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // The relationship with tbl_book
+  tbl_book     tbl_book[]
+}
+
+// Define the tbl_book table
+model tbl_book {
+  idx               Int      @id @default(autoincrement())
+  book_uniq_idx     String      @unique
+  bookname          String
+  content_owner_id  Int
+  publisher_id      Int
+  cover_photo       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // The relationships with content_owner and publisher
+  content_owner     content_owner @relation(fields: [content_owner_id], references: [idx])
+  publisher         publisher    @relation(fields: [publisher_id], references: [idx])
+}
